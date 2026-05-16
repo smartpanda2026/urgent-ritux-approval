@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AAV Approver">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>">
+    <title>AAV Treatment Approver</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --radius: 16px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 12px 16px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 20px 16px;
+            text-align: center;
+            border-radius: 0 0 var(--radius) var(--radius);
+            margin-bottom: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(30,64,175,0.3);
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .icon {
+            font-size: 1.2rem;
+        }
+
+        .section-num {
+            background: #1e40af;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .form-group .hint {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px; /* Prevents iOS zoom */
+            font-family: inherit;
+            background: #f8fafc;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            color: var(--text);
+            -webkit-appearance: none;
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn.selected {
+            background: #dbeafe;
+            border-color: var(--primary);
+            color: #1e40af;
+        }
+
+        .btn.yes-btn.selected {
+            background: #dcfce7;
+            border-color: var(--success);
+            color: #15803d;
+        }
+
+        .btn.no-btn.selected {
+            background: #fee2e2;
+            border-color: var(--danger);
+            color: #b91c1c;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .btn-primary:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .progress-step {
+            flex: 1;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+
+        .progress-step.active {
+            background: var(--primary);
+        }
+
+        .progress-step.done {
+            background: var(--success);
+        }
+
+        .result-card {
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        .result-approved {
+            background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+            border: 2px solid var(--success);
+        }
+
+        .result-denied {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            border: 2px solid var(--danger);
+        }
+
+        .result-borderline {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid var(--warning);
+        }
+
+        .result-icon {
+            font-size: 3rem;
+            margin-bottom: 8px;
+        }
+
+        .result-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 16px 0;
+            gap: 8px;
+        }
+
+        .score-box {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .score-box .label {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .score-box .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e40af;
+        }
+
+        .score-box .sub {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+
+        .regimen-list {
+            text-align: left;
+            margin: 12px 0;
+        }
+
+        .regimen-list li {
+            padding: 6px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .renal-summary {
+            background: #f0f9ff;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 0.8rem;
+            margin: 8px 0;
+        }
+
+        .renal-summary .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+        }
+
+        .disclaimer {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>💊 AAV Treatment Approver</h1>
+    <p>Rituximab & Avacopan Authorization</p>
+</div>
+
+<div class="container" id="app">
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-step active" id="step1"></div>
+        <div class="progress-step" id="step2"></div>
+        <div class="progress-step" id="step3"></div>
+        <div class="progress-step" id="step4"></div>
+        <div class="progress-step" id="step5"></div>
+    </div>
+
+    <!-- Screens will be rendered here dynamically -->
+    <div id="screenContainer"></div>
+</div>
+
+<div class="disclaimer">
+    ⚠️ Clinical decision support prototype<br>
+    Final authorization requires physician judgment<br>
+    and institutional protocol compliance.
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================================
+// AAV TREATMENT APPROVER - MOBILE WEB APP
+// ============================================================================
+
+const APP = {
+    currentScreen: 0,
+    totalScreens: 5,
+    
+    // Patient data store
+    data: {
+        // Section 1: Demographics
+        age: null,
+        weight: null,
+        sex: null,
+        
+        // Section 2: Diagnosis
+        ancaType: null,
+        ancaTiter: null,
+        antiGbm: null,
+        baselineEgfr: null,
+        currentEgfr: null,
+        declineDays: null,
+        hematuria: null,
+        proteinuria: null,
+        lungInvolve: null,
+        alveolarHemorrhage: null,
+        entInvolve: null,
+        neuropathy: null,
+        jointInvolve: null,
+        skinInvolve: null,
+        ocularInvolve: null,
+        cardiacInvolve: null,
+        
+        // Section 3: Risk factors
+        activeInfection: null,
+        recentInfection: null,
+        chronicInfection: null,
+        diabetes: null,
+        predDependency: null,
+        priorRtx: null,
+        priorCyc: null,
+        hepB: null,
+        igg: null,
+        
+        // Derived
+        egrfDrop: 0,
+        dailyDrop: 0,
+        declineGrade: '',
+        declinePoints: 0,
+        organCount: 0,
+        
+        // Results
+        rtxEligible: false,
+        rtxConfidence: 0,
+        rtxPoints: 0,
+        avaEligible: false,
+        avaConfidence: 0,
+        avaPoints: 0,
+    },
+
+    init() {
+        this.renderScreen(0);
+        this.updateProgress(0);
+    },
+
+    updateProgress(screen) {
+        for (let i = 0; i < this.totalScreens; i++) {
+            const el = document.getElementById('step' + (i + 1));
+            if (el) {
+                el.className = 'progress-step';
+                if (i < screen) el.classList.add('done');
+                if (i === screen) el.classList.add('active');
+            }
+        }
+    },
+
+    showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    },
+
+    renderScreen(index) {
+        this.currentScreen = index;
+        this.updateProgress(index);
+        
+        const container = document.getElementById('screenContainer');
+        container.innerHTML = '';
+        
+        let screen;
+        switch(index) {
+            case 0: screen = this.screenPatientInfo(); break;
+            case 1: screen = this.screenDiagnosis(); break;
+            case 2: screen = this.screenOrganInvolvement(); break;
+            case 3: screen = this.screenRiskFactors(); break;
+            case 4: screen = this.screenResults(); break;
+        }
+        
+        container.innerHTML = screen;
+        container.classList.add('slide-in');
+        
+        // Setup event listeners for this screen
+        this.setupScreenListeners(index);
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    setupScreenListeners(index) {
+        // Setup yes/no button toggles
+        document.querySelectorAll('.btn-row').forEach(row => {
+            row.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn')) {
+                    row.querySelectorAll('.btn').forEach(b => {
+                        b.classList.remove('selected', 'yes-btn', 'no-btn');
+                    });
+                    e.target.classList.add('selected');
+                    if (e.target.dataset.value === 'yes') e.target.classList.add('yes-btn');
+                    if (e.target.dataset.value === 'no') e.target.classList.add('no-btn');
+                }
+            });
+        });
+
+        // Setup next/back buttons
+        const nextBtn = document.getElementById('nextBtn');
+        const backBtn = document.getElementById('backBtn');
+        const calculateBtn = document.getElementById('calculateBtn');
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (this.validateScreen(index)) {
+                    this.collectScreenData(index);
+                    this.renderScreen(index + 1);
+                }
+            });
+        }
+        
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                this.renderScreen(index - 1);
+            });
+        }
+        
+        if (calculateBtn) {
+            calculateBtn.addEventListener('click', () => {
+                if (this.validateScreen(index)) {
+                    this.collectScreenData(index);
+                    this.calculateResults();
+                    this.renderScreen(4);
+                }
+            });
+        }
+    },
+
+    validateScreen(index) {
+        const required = this.getRequiredFields(index);
+        for (let field of required) {
+            const val = this.getFieldValue(field);
+            if (val === null || val === '' || val === undefined) {
+                this.showToast('⚠️ Please complete all required fields');
+                return false;
+            }
+        }
+        return true;
+    },
+
+    getRequiredFields(index) {
+        const fields = {
+            0: ['age', 'weight', 'sex'],
+            1: ['ancaType', 'ancaTiter', 'baselineEgfr', 'currentEgfr', 'declineDays'],
+            2: ['hematuria', 'lungInvolve'],
+            3: ['activeInfection', 'hepB'],
+        };
+        return fields[index] || [];
+    },
+
+    getFieldValue(field) {
+        // Check data store first
+        if (this.data[field] !== null && this.data[field] !== undefined) {
+            return this.data[field];
+        }
+        
+        // Check DOM elements
+        const el = document.querySelector(`[name="${field}"]`);
+        if (!el) return null;
+        
+        if (el.type === 'radio') {
+            const checked = document.querySelector(`[name="${field}"]:checked`);
+            return checked ? checked.value : null;
+        }
+        
+        return el.value;
+    },
+
+    collectScreenData(index) {
+        switch(index) {
+            case 0:
+                this.data.age = parseFloat(document.getElementById('age').value);
+                this.data.weight = parseFloat(document.getElementById('weight').value);
+                this.data.sex = document.querySelector('input[name="sex"]:checked')?.value;
+                break;
+                
+            case 1:
+                this.data.ancaType = document.getElementById('ancaType').value;
+                this.data.ancaTiter = parseFloat(document.getElementById('ancaTiter').value);
+                this.data.antiGbm = this.getBoolValue('antiGbm');
+                this.data.baselineEgfr = parseFloat(document.getElementById('baselineEgfr').value);
+                this.data.currentEgfr = parseFloat(document.getElementById('currentEgfr').value);
+                this.data.declineDays = parseFloat(document.getElementById('declineDays').value);
+                
+                // Calculate renal metrics
+                this.data.egrfDrop = this.data.baselineEgfr - this.data.currentEgfr;
+                this.data.dailyDrop = this.data.egrfDrop / this.data.declineDays;
+                
+                // Grade decline
+                const { grade, points } = this.calcDeclineGrade(
+                    this.data.dailyDrop, this.data.currentEgfr, this.data.declineDays
+                );
+                this.data.declineGrade = grade;
+                this.data.declinePoints = points;
+                break;
+                
+            case 2:
+                this.data.hematuria = this.getBoolValue('hematuria');
+                this.data.proteinuria = this.getBoolValue('proteinuria');
+                this.data.lungInvolve = this.getBoolValue('lungInvolve');
+                this.data.alveolarHemorrhage = this.data.lungInvolve ? this.getBoolValue('alveolarHemorrhage') : false;
+                this.data.entInvolve = this.getBoolValue('entInvolve');
+                this.data.neuropathy = this.getBoolValue('neuropathy');
+                this.data.jointInvolve = this.getBoolValue('jointInvolve');
+                this.data.skinInvolve = this.getBoolValue('skinInvolve');
+                this.data.ocularInvolve = this.getBoolValue('ocularInvolve');
+                this.data.cardiacInvolve = this.getBoolValue('cardiacInvolve');
+                
+                // Count organ systems
+                this.data.organCount = [
+                    this.data.hematuria, this.data.proteinuria, this.data.lungInvolve,
+                    this.data.entInvolve, this.data.neuropathy, this.data.jointInvolve,
+                    this.data.skinInvolve, this.data.ocularInvolve, this.data.cardiacInvolve
+                ].filter(Boolean).length;
+                break;
+                
+            case 3:
+                this.data.activeInfection = this.getBoolValue('activeInfection');
+                this.data.recentInfection = this.getBoolValue('recentInfection');
+                this.data.chronicInfection = this.getBoolValue('chronicInfection');
+                this.data.diabetes = this.getBoolValue('diabetes');
+                this.data.predDependency = this.getBoolValue('predDependency');
+                this.data.priorRtx = this.getBoolValue('priorRtx');
+                this.data.priorCyc = this.getBoolValue('priorCyc');
+                this.data.hepB = document.getElementById('hepB').value;
+                this.data.igg = document.getElementById('igg').value ? parseFloat(document.getElementById('igg').value) : null;
+                break;
+        }
+    },
+
+    getBoolValue(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value === 'yes' : null;
+    },
+
+    calcDeclineGrade(dailyDrop, currentEgfr, declineDays) {
+        if (currentEgfr < 15 && declineDays <= 28) return { grade: 'CRITICAL', points: 3 };
+        if (dailyDrop >= 2.0) return { grade: 'SEVERE', points: 3 };
+        if (dailyDrop >= 1.0) return { grade: 'MODERATE', points: 2 };
+        if (dailyDrop >= 0.5) return { grade: 'MILD', points: 1 };
+        return { grade: 'STABLE', points: 0 };
+    },
+
+    calcConfidence(met, total) {
+        const ratio = met / total;
+        if (ratio < 0.4) return Math.round(ratio * 50);
+        if (ratio < 0.6) return Math.round(50 + (ratio - 0.4) * 150);
+        return Math.min(99, Math.round(80 + (ratio - 0.6) * 50));
+    },
+
+    calculateResults() {
+        const d = this.data;
+        
+        // ---- RITUXIMAB ASSESSMENT ----
+        let rtxPoints = 0;
+        const rtxReasons = [];
+        const rtxContra = [];
+        
+        if (d.ancaType && d.ancaType !== 'none' && d.ancaTiter >= 20) {
+            rtxPoints += 1;
+            rtxReasons.push(`${d.ancaType}-ANCA positive (1:${d.ancaTiter})`);
+            if (d.ancaTiter >= 100) {
+                rtxPoints += 1;
+                rtxReasons.push('High-titer ANCA');
+            }
+        }
+        
+        if (d.currentEgfr < 30) {
+            rtxPoints += 2;
+            rtxReasons.push('Severe renal impairment (eGFR<30)');
+        } else if (d.currentEgfr < 60 && d.dailyDrop >= 1.0) {
+            rtxPoints += 1;
+            rtxReasons.push('RPGN pattern');
+        }
+        
+        if (d.hematuria) {
+            rtxPoints += 1;
+            rtxReasons.push('Active urinary sediment');
+        }
+        
+        if (d.alveolarHemorrhage) {
+            rtxPoints += 2;
+            rtxReasons.push('Alveolar hemorrhage');
+        }
+        
+        if (d.organCount >= 2) {
+            rtxPoints += 1;
+            rtxReasons.push(`${d.organCount} organ systems involved`);
+        }
+        
+        // Contraindications
+        if (d.activeInfection) {
+            rtxContra.push('Active systemic infection – ABSOLUTE');
+            rtxPoints -= 3;
+        }
+        
+        if (d.hepB && d.hepB.toUpperCase() === 'POSITIVE') {
+            rtxContra.push('Active hepatitis B – ABSOLUTE');
+            rtxPoints -= 3;
+        }
+        
+        if (d.igg !== null && d.igg < 3.0) {
+            rtxContra.push(`Severe hypogammaglobulinemia (IgG ${d.igg})`);
+            rtxPoints -= 1;
+        }
+        
+        rtxPoints = Math.max(0, Math.min(rtxPoints, 10));
+        const hasAbsoluteContra = rtxContra.some(c => c.includes('ABSOLUTE'));
+        
+        d.rtxPoints = rtxPoints;
+        d.rtxConfidence = this.calcConfidence(rtxPoints, 10);
+        d.rtxEligible = rtxPoints >= 4 && !hasAbsoluteContra;
+        d.rtxReasons = rtxReasons;
+        d.rtxContra = rtxContra;
+        
+        // ---- AVACOPAN ASSESSMENT ----
+        let avaPoints = 0;
+        const avaReasons = [];
+        const avaContra = [];
+        
+        if (d.currentEgfr < 15) {
+            avaPoints += 2;
+            avaReasons.push('eGFR <15 (dialysis-dependent)');
+        } else if (d.currentEgfr < 30) {
+            avaPoints += 2;
+            avaReasons.push('eGFR <30 (severe renal impairment)');
+        } else if (d.currentEgfr < 60 && d.dailyDrop >= 1.5) {
+            avaPoints += 1;
+            avaReasons.push('Rapidly declining eGFR');
+        }
+        
+        if (d.alveolarHemorrhage) {
+            avaPoints += 2;
+            avaReasons.push('Active alveolar hemorrhage');
+        }
+        
+        if (d.ancaType === 'PR3') {
+            avaPoints += 1;
+            avaReasons.push('PR3-ANCA (favorable avacopan response)');
+        } else if (d.ancaType === 'MPO') {
+            avaPoints += 1;
+        }
+        
+        if (d.predDependency || d.diabetes) {
+            avaPoints += 1;
+            avaReasons.push('High glucocorticoid toxicity risk');
+        }
+        
+        if (d.currentEgfr < 20 || d.alveolarHemorrhage) {
+            avaPoints += 1;
+            avaReasons.push('Critical organ dysfunction');
+        }
+        
+        // Contraindications
+        const severeInfectionRisk = d.activeInfection || d.recentInfection || d.chronicInfection;
+        if (severeInfectionRisk) {
+            avaContra.push('Infection risk – immunosuppression concern');
+            avaPoints -= 2;
+        }
+        
+        avaPoints = Math.max(0, Math.min(avaPoints, 8));
+        
+        d.avaPoints = avaPoints;
+        d.avaConfidence = this.calcConfidence(avaPoints, 8);
+        d.avaEligible = avaPoints >= 3 && avaContra.length <= 1;
+        d.avaReasons = avaReasons;
+        d.avaContra = avaContra;
+    },
+
+    // ========================
+    // SCREEN RENDERERS
+    // ========================
+
+    screenPatientInfo() {
+        return `
+            <div class="card slide-in">
+                <div class="card-title">
+                    <span class="section-num">1</span> Patient Demographics
+                </div>
+                <div class="form-group">
+                    <label>Age (years) <span class="hint">*required</span></label>
+                    <input type="number" id="age" name="age" placeholder="e.g., 55" 
+                           min="0" max="120" inputmode="numeric"
+                           value="${this.data.age || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Weight (kg) <span class="hint">*required</span></label>
+                    <input type="number" id="weight" name="weight" placeholder="e.g., 70" 
+                           min="20" max="200" inputmode="decimal"
+                           value="${this.data.weight || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Sex <span class="hint">*required</span></label>
+                    <div class="btn-row">
+                        <div class="btn ${this.data.sex === 'M' ? 'selected' : ''}" 
+                             data-value="yes" onclick="document.querySelector('input[name=sex][value=M]').checked=true">
+                            <input type="radio" name="sex" value="M" class="hidden" 
+                                   ${this.data.sex === 'M' ? 'checked' : ''}> ♂ Male
+                        </div>
+                        <div class="btn ${this.data.sex === 'F' ? 'selected' : ''}" 
+                             data-value="yes" onclick="document.querySelector('input[name=sex][value=F]').checked=true">
+                            <input type="radio" name="sex" value="F" class="hidden"
+                                   ${this.data.sex === 'F' ? 'checked' : ''}> ♀ Female
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-primary" id="nextBtn">Next: Diagnosis →</button>
+        `;
+    },
+
+    screenDiagnosis() {
+        const d = this.data;
+        return `
+            <div class="card slide-in">
+                <div class="card-title">
+                    <span class="section-num">2</span> Diagnosis Assessment
+                </div>
+                
+                <div class="form-group">
+                    <label>ANCA Type <span class="hint">*required</span></label>
+                    <select id="ancaType" name="ancaType">
+                        <option value="">Select ANCA type...</option>
+                        <option value="PR3" ${d.ancaType === 'PR3' ? 'selected' : ''}>PR3-ANCA (c-ANCA)</option>
+                        <option value="MPO" ${d.ancaType === 'MPO' ? 'selected' : ''}>MPO-ANCA (p-ANCA)</option>
+                        <option value="none" ${d.ancaType === 'none' ? 'selected' : ''}>ANCA-negative</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>ANCA Titer <span class="hint">*required (reciprocal, e.g., 130 for 1:130)</span></label>
+                    <input type="number" id="ancaTiter" name="ancaTiter" placeholder="e.g., 130" 
+                           min="0" inputmode="numeric" value="${d.ancaTiter || ''}">
+                </div>
+                
+                <div class="form-group">
+                    <label>Anti-GBM Antibodies</label>
+                    <div class="btn-row">
+                        <div class="btn ${d.antiGbm === true ? 'selected yes-btn' : ''}">Yes
+                            <input type="radio" name="antiGbm" value="yes" class="hidden" ${d.antiGbm === true ? 'checked' : ''}>
+                        </div>
+                        <div class="btn ${d.antiGbm === false ? 'selected no-btn' : ''}">No
+                            <input type="radio" name="antiGbm" value="no" class="hidden" ${d.antiGbm === false ? 'checked' : ''}>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr style="border-color:#e2e8f0; margin:16px 0;">
+                <div class="card-title" style="font-size:0.9rem;">📊 Renal Function (RPGN Assessment)</div>
+                
+                <div class="form-group">
+                    <label>Baseline eGFR (mL/min) <span class="hint">*required (within 6 months)</span></label>
+                    <input type="number" id="baselineEgfr" name="baselineEgfr" placeholder="e.g., 75" 
+                           min="0" inputmode="numeric" value="${d.baselineEgfr || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Current eGFR (mL/min) <span class="hint">*required</span></label>
+                    <input type="number" id="currentEgfr" name="currentEgfr" placeholder="e.g., 25" 
+                           min="0" inputmode="numeric" value="${d.currentEgfr || ''}">
+                </div>
+                <div class="form-group">
+                    <label>Days of Decline <span class="hint">*required</span></label>
+                    <input type="number" id="declineDays" name="declineDays" placeholder="e.g., 14" 
+                           min="1" inputmode="numeric" value="${d.declineDays || ''}">
+                </div>
+                
+                ${d.egrfDrop > 0 ? `
+                <div class="renal-summary">
+                    <div class="row"><span>eGFR Change:</span><strong>${d.baselineEgfr} → ${d.currentEgfr} mL/min</strong></div>
+                    <div class="row"><span>Total Drop:</span><strong>${d.egrfDrop.toFixed(1)} mL/min</strong></div>
+                    <div class="row"><span>Daily Rate:</span><strong>${d.dailyDrop.toFixed(2)} mL/min/day</strong></div>
+                    <div class="row"><span>Grade:</span><span class="badge ${d.declinePoints >= 2 ? 'badge-danger' : 'badge-warning'}">${d.declineGrade}</span></div>
+                </div>` : ''}
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-secondary" id="backBtn">← Back</button>
+                <button class="btn-primary" id="nextBtn" style="flex:2;">Next: Organ Involvement →</button>
+            </div>
+        `;
+    },
+
+    screenOrganInvolvement() {
+        const d = this.data;
+        const makeToggle = (name, label, current) => `
+            <div class="form-group">
+                <label>${label}</label>
+                <div class="btn-row">
+                    <div class="btn ${current === true ? 'selected yes-btn' : ''}">Yes
+                        <input type="radio" name="${name}" value="yes" class="hidden" ${current === true ? 'checked' : ''}>
+                    </div>
+                    <div class="btn ${current === false ? 'selected no-btn' : ''}">No
+                        <input type="radio" name="${name}" value="no" class="hidden" ${current === false ? 'checked' : ''}>
+                    </div>
+                </div>
+            </div>`;
+        
+        return `
+            <div class="card slide-in">
+                <div class="card-title">
+                    <span class="section-num">3</span> Organ Involvement
+                </div>
+                
+                <div class="card-title" style="font-size:0.85rem;">🫘 Renal</div>
+                ${makeToggle('hematuria', 'Active urine sediment (hematuria, RBC casts)? *', d.hematuria)}
+                ${makeToggle('proteinuria', 'Proteinuria >1+ or ACR >30 mg/mmol?', d.proteinuria)}
+                
+                <div class="card-title" style="font-size:0.85rem;">🫁 Pulmonary</div>
+                ${makeToggle('lungInvolve', 'Any pulmonary involvement? *', d.lungInvolve)}
+                ${d.lungInvolve ? makeToggle('alveolarHemorrhage', 'Specifically alveolar hemorrhage?', d.alveolarHemorrhage) : ''}
+                
+                <div class="card-title" style="font-size:0.85rem;">👃 ENT</div>
+                ${makeToggle('entInvolve', 'ENT involvement (sinusitis, otitis, saddle nose)?', d.entInvolve)}
+                
+                <div class="card-title" style="font-size:0.85rem;">🧠 Nervous System</div>
+                ${makeToggle('neuropathy', 'Peripheral neuropathy (mononeuritis multiplex)?', d.neuropathy)}
+                
+                <div class="card-title" style="font-size:0.85rem;">🦴 Musculoskeletal</div>
+                ${makeToggle('jointInvolve', 'Inflammatory arthritis/arthralgias?', d.jointInvolve)}
+                
+                <div class="card-title" style="font-size:0.85rem;">🔴 Other Systems</div>
+                ${makeToggle('skinInvolve', 'Cutaneous vasculitis (purpura, ulcers)?', d.skinInvolve)}
+                ${makeToggle('ocularInvolve', 'Ocular involvement (scleritis, episcleritis)?', d.ocularInvolve)}
+                ${makeToggle('cardiacInvolve', 'Cardiac involvement (pericarditis, myocarditis)?', d.cardiacInvolve)}
+                
+                ${d.organCount > 0 ? `
+                <div style="text-align:center; padding:12px; background:#f0f9ff; border-radius:12px; margin-top:12px;">
+                    <strong>Organ Systems Involved: ${d.organCount}</strong>
+                </div>` : ''}
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-secondary" id="backBtn">← Back</button>
+                <button class="btn-primary" id="nextBtn" style="flex:2;">Next: Risk Factors →</button>
+            </div>
+        `;
+    },
+
+    screenRiskFactors() {
+        const d = this.data;
+        const makeToggle = (name, label, current) => `
+            <div class="form-group">
+                <label>${label}</label>
+                <div class="btn-row">
+                    <div class="btn ${current === true ? 'selected yes-btn' : ''}">Yes
+                        <input type="radio" name="${name}" value="yes" class="hidden" ${current === true ? 'checked' : ''}>
+                    </div>
+                    <div class="btn ${current === false ? 'selected no-btn' : ''}">No
+                        <input type="radio" name="${name}" value="no" class="hidden" ${current === false ? 'checked' : ''}>
+                    </div>
+                </div>
+            </div>`;
+        
+        return `
+            <div class="card slide-in">
+                <div class="card-title">
+                    <span class="section-num">4</span> Risk Factors & Comorbidities
+                </div>
+                
+                <div class="card-title" style="font-size:0.85rem;">🦠 Infection Risk</div>
+                ${makeToggle('activeInfection', 'Active systemic infection (sepsis, TB, fungal)? *', d.activeInfection)}
+                ${makeToggle('recentInfection', 'Serious infection within 30 days?', d.recentInfection)}
+                ${makeToggle('chronicInfection', 'Chronic infection (bronchiectasis, indwelling catheter)?', d.chronicInfection)}
+                
+                <div class="card-title" style="font-size:0.85rem;">⚕️ Metabolic</div>
+                ${makeToggle('diabetes', 'Diabetes mellitus?', d.diabetes)}
+                ${makeToggle('predDependency', 'Prior prolonged steroid use or complications?', d.predDependency)}
+                
+                <div class="card-title" style="font-size:0.85rem;">💉 Prior Therapies</div>
+                ${makeToggle('priorRtx', 'Prior rituximab within 12 months?', d.priorRtx)}
+                ${makeToggle('priorCyc', 'Prior cyclophosphamide (cumulative >10g)?', d.priorCyc)}
+                
+                <div class="card-title" style="font-size:0.85rem;">🧪 Serology</div>
+                <div class="form-group">
+                    <label>Hepatitis B status <span class="hint">*required</span></label>
+                    <select id="hepB" name="hepB">
+                        <option value="">Select...</option>
+                        <option value="negative" ${d.hepB === 'negative' ? 'selected' : ''}>Negative</option>
+                        <option value="positive" ${d.hepB === 'positive' ? 'selected' : ''}>Positive (active)</option>
+                        <option value="unknown" ${d.hepB === 'unknown' ? 'selected' : ''}>Unknown</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Recent IgG level (g/L) <span class="hint">optional</span></label>
+                    <input type="number" id="igg" name="igg" placeholder="e.g., 6.5" 
+                           min="0" step="0.1" inputmode="decimal" value="${d.igg || ''}">
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-secondary" id="backBtn">← Back</button>
+                <button class="btn-primary" id="calculateBtn" style="flex:2;">🔍 Calculate & View Results</button>
+            </div>
+        `;
+    },
+
+    screenResults() {
+        const d = this.data;
+        const anyApproved = d.rtxEligible || d.avaEligible;
+        const borderline = (d.rtxPoints >= 3 && !d.rtxEligible) || (d.avaPoints >= 2 && !d.avaEligible);
+        
+        let resultCard;
+        if (anyApproved) {
+            resultCard = `
+                <div class="result-card result-approved">
+                    <div class="result-icon">✅</div>
+                    <div class="result-title">TREATMENT AUTHORIZED</div>
+                    <p style="font-size:0.85rem;color:#15803d;">Initiate immediately per protocol below</p>
+                </div>`;
+        } else if (borderline) {
+            resultCard = `
+                <div class="result-card result-borderline">
+                    <div class="result-icon">⚠️</div>
+                    <div class="result-title">BORDERLINE CASE</div>
+                    <p style="font-size:0.85rem;">Specialty consultation required</p>
+                </div>`;
+        } else {
+            resultCard = `
+                <div class="result-card result-denied">
+                    <div class="result-icon">❌</div>
+                    <div class="result-title">NOT APPROVED</div>
+                    <p style="font-size:0.85rem;">Insufficient evidence for emergent AAV</p>
+                </div>`;
+        }
+        
+        let scoresHtml = `
+            <div class="card">
+                <div class="card-title">📊 Assessment Scores</div>
+                <div class="score-display">
+                    <div class="score-box">
+                        <div class="label">Rituximab</div>
+                        <div class="value">${d.rtxPoints}<span style="font-size:0.7rem">/10</span></div>
+                        <div class="sub">${d.rtxConfidence}% confidence</div>
+                        <span class="badge ${d.rtxEligible ? 'badge-success' : 'badge-danger'}">${d.rtxEligible ? 'APPROVED' : 'DENIED'}</span>
+                    </div>
+                    <div class="score-box">
+                        <div class="label">Avacopan</div>
+                        <div class="value">${d.avaPoints}<span style="font-size:0.7rem">/8</span></div>
+                        <div class="sub">${d.avaConfidence}% confidence</div>
+                        <span class="badge ${d.avaEligible ? 'badge-success' : 'badge-danger'}">${d.avaEligible ? 'APPROVED' : 'DENIED'}</span>
+                    </div>
+                </div>
+            </div>`;
+        
+        let regimenHtml = '';
+        if (anyApproved) {
+            let steps = [];
+            steps.push('<li><strong>💉 Glucocorticoids:</strong> Methylprednisolone IV pulse x3 days + prednisone taper</li>');
+            
+            if (d.rtxEligible) {
+                steps.push('<li><strong>💊 Rituximab:</strong> 1000 mg IV Day 1 & Day 15 with premedication</li>');
+            } else {
+                steps.push('<li><strong>💊 Cyclophosphamide:</strong> IV per EUVAS protocol with MESNA</li>');
+            }
+            
+            if (d.avaEligible) {
+                steps.push('<li><strong>🔬 Avacopan:</strong> 30 mg PO BID ×52 weeks (ADVOCATE protocol)</li>');
+                steps.push('<li><strong>📉 Rapid Steroid Taper:</strong> Prednisone off by Week 5</li>');
+            }
+            
+            steps.push('<li><strong>🛡️ PJP Prophylaxis:</strong> TMP-SMX 800/160 mg 3×/week</li>');
+            steps.push('<li><strong>🦴 Bone Protection:</strong> Calcium + Vitamin D3</li>');
+            
+            regimenHtml = `
+                <div class="card">
+                    <div class="card-title">💊 Recommended Regimen</div>
+                    <ul class="regimen-list">${steps.join('')}</ul>
+                </div>`;
+        }
+        
+        return `
+            ${resultCard}
+            ${scoresHtml}
+            
+            ${d.rtxReasons && d.rtxReasons.length > 0 ? `
+            <div class="card">
+                <div class="card-title">✅ Rituximab Supporting Factors</div>
+                ${d.rtxReasons.map(r => `<div style="padding:4px 0;font-size:0.8rem;">• ${r}</div>`).join('')}
+            </div>` : ''}
+            
+            ${d.rtxContra && d.rtxContra.length > 0 ? `
+            <div class="card" style="border-color:#fecaca;">
+                <div class="card-title" style="color:#dc2626;">⚠️ Rituximab Contraindications</div>
+                ${d.rtxContra.map(c => `<div style="padding:4px 0;font-size:0.8rem;color:#b91c1c;">• ${c}</div>`).join('')}
+            </div>` : ''}
+            
+            ${d.avaReasons && d.avaReasons.length > 0 ? `
+            <div class="card">
+                <div class="card-title">✅ Avacopan Supporting Factors</div>
+                ${d.avaReasons.map(r => `<div style="padding:4px 0;font-size:0.8rem;">• ${r}</div>`).join('')}
+            </div>` : ''}
+            
+            ${regimenHtml}
+            
+            <div style="text-align:center; margin-top:16px;">
+                <button class="btn-secondary" onclick="APP.renderScreen(0)" style="width:auto;display:inline-block;padding:12px 24px;">
+                    🔄 Start New Assessment
+                </button>
+            </div>
+        `;
+    }
+};
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', () => APP.init());
+</script>
+</body>
+</html>
